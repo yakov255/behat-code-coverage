@@ -42,9 +42,9 @@ jobs:
       with:
         php-version: ${{ matrix.php-version }}
         #coverage: 'pcov'
-        extensions: pcov
+        extensions: xdebug
         tools: cs2pr
-        ini-values: 'error_reporting=E_ALL, display_errors=On, xdebug.mode=debug, pcov.enabled=1'
+        ini-values: 'error_reporting=E_ALL, display_errors=On, xdebug.mode=coverage, pcov.enabled=1'
       env:
         COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
