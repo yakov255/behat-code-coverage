@@ -42,7 +42,7 @@ jobs:
       with:
         php-version: ${{ matrix.php-version }}
         #coverage: 'pcov'
-        extensions: xdebug, pcov
+        extensions: pcov
         tools: cs2pr
         ini-values: 'error_reporting=E_ALL, display_errors=On, xdebug.mode=debug, pcov.enabled=1'
       env:
