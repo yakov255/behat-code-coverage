@@ -25,11 +25,6 @@ jobs:
 
         dependencies:
           - "highest"
-        driver:
-          - "none"
-          - "xdebug"
-          - "pcov"
-          - "pcov+xdebug"
 
         exclude:
           - php-version: "8.1"
@@ -46,10 +41,10 @@ jobs:
       uses: "shivammathur/setup-php@v2"
       with:
         php-version: ${{ matrix.php-version }}
-        coverage: ${{ matrix.driver == 'pcov+xdebug' && 'pcov' || matrix.driver }}
-        extensions: ${{ matrix.driver == 'pcov+xdebug' && 'xdebug' || '' }}
+        coverage: 'pcov'
+        extensions: 'xdebug'
         tools: cs2pr
-        ini-values: ${{ matrix.driver == 'pcov+xdebug' && 'error_reporting=E_ALL, display_errors=On, xdebug.mode=debug,develop' || 'error_reporting=E_ALL, display_errors=On' }}
+        ini-values: 'error_reporting=E_ALL, display_errors=On, xdebug.mode=debug,develop'
       env:
         COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
