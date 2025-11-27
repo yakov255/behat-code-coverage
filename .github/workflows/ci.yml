@@ -42,17 +42,11 @@ jobs:
       with:
         php-version: ${{ matrix.php-version }}
         coverage: ${{ matrix.driver == 'pcov+xdebug' && 'pcov' || matrix.driver }}
+        extensions: ${{ matrix.driver == 'pcov+xdebug' && 'xdebug' || '' }}
         tools: cs2pr
-        ini-values: "error_reporting=E_ALL, display_errors=On"
+        ini-values: ${{ matrix.driver == 'pcov+xdebug' && 'error_reporting=E_ALL, display_errors=On, xdebug.mode=debug,develop' || 'error_reporting=E_ALL, display_errors=On' }}
       env:
         COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: "Install additional coverage driver"
-      if: matrix.driver == 'pcov+xdebug'
-      run: |
-        # Install xdebug as the second driver
-        pecl install xdebug
-        echo "zend_extension=xdebug.so" >> $(php --ini | grep "Scan for additional .ini files" | awk '{print $NF}')/xdebug.ini
 
     - name: Verify PHP version used
       run: |
