@@ -15,8 +15,6 @@ jobs:
       fail-fast: false
       matrix:
         php-version:
-          - "8.5"
-          - "8.4"
           - "8.3"
 
         php-code-coverage-version:
@@ -24,12 +22,8 @@ jobs:
 
         symfony-version:
           - "^7.3"
-          - "^6.4.24"
-          - "^5.4.45"
 
         dependencies:
-          - "highest"
-          - "lowest"
           - "latest"
 
         driver:
