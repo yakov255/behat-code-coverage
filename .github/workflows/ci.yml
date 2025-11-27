@@ -29,6 +29,7 @@ jobs:
           - "none"
           - "xdebug"
           - "pcov"
+          - "pcov+xdebug"
 
         exclude:
           - php-version: "8.1"
@@ -45,9 +46,10 @@ jobs:
       uses: "shivammathur/setup-php@v2"
       with:
         php-version: ${{ matrix.php-version }}
-        coverage: ${{ matrix.driver }}
+        coverage: ${{ matrix.driver == 'pcov+xdebug' && 'pcov' || matrix.driver }}
+        extensions: ${{ matrix.driver == 'pcov+xdebug' && 'xdebug' || '' }}
         tools: cs2pr
-        ini-values: "error_reporting=E_ALL, display_errors=On"
+        ini-values: ${{ matrix.driver == 'pcov+xdebug' && 'error_reporting=E_ALL, display_errors=On, xdebug.mode=debug,develop' || 'error_reporting=E_ALL, display_errors=On' }}
       env:
         COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -125,6 +127,8 @@ jobs:
       run: |
         if [ "${{ matrix.driver }}" == "xdebug" ]; then
           php -dmemory_limit=-1 vendor/phpunit/phpunit/phpunit --coverage-clover=build/coverage-phpunit/clover.xml --path-coverage;
+        elif [ "${{ matrix.driver }}" == "pcov+xdebug" ]; then
+          php -dmemory_limit=-1 vendor/phpunit/phpunit/phpunit --coverage-clover=build/coverage-phpunit/clover.xml;
         elif [ "${{ matrix.driver }}" == "none" ]; then
           php -dmemory_limit=-1 vendor/phpunit/phpunit/phpunit --no-coverage;
         else
