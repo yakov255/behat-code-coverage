@@ -30,6 +30,7 @@ jobs:
           - "none"
           - "xdebug"
           - "pcov"
+          - "pcov+xdebug"
 
     steps:
     - uses: actions/checkout@v4
@@ -40,11 +41,18 @@ jobs:
       uses: "shivammathur/setup-php@v2"
       with:
         php-version: ${{ matrix.php-version }}
-        coverage: ${{ matrix.driver }}
+        coverage: ${{ matrix.driver == 'pcov+xdebug' && 'pcov' || matrix.driver }}
         tools: cs2pr
         ini-values: "error_reporting=E_ALL, display_errors=On"
       env:
         COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: "Install additional coverage driver"
+      if: matrix.driver == 'pcov+xdebug'
+      run: |
+        # Install xdebug as the second driver
+        pecl install xdebug
+        echo "zend_extension=xdebug.so" >> $(php --ini | grep "Scan for additional .ini files" | awk '{print $NF}')/xdebug.ini
 
     - name: Verify PHP version used
       run: |
@@ -120,6 +128,8 @@ jobs:
       run: |
         if [ "${{ matrix.driver }}" == "xdebug" ]; then
           php -dmemory_limit=-1 vendor/phpunit/phpunit/phpunit --coverage-clover=build/coverage-phpunit/clover.xml --path-coverage;
+        elif [ "${{ matrix.driver }}" == "pcov+xdebug" ]; then
+          php -dmemory_limit=-1 vendor/phpunit/phpunit/phpunit --coverage-clover=build/coverage-phpunit/clover.xml;
         elif [ "${{ matrix.driver }}" == "none" ]; then
           php -dmemory_limit=-1 vendor/phpunit/phpunit/phpunit --no-coverage;
         else
