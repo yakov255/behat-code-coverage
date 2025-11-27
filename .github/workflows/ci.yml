@@ -110,8 +110,6 @@ jobs:
     - name: PHPUnit
       run: |
         php -v
-        php -m | grep -q pcov || (echo "pcov is not enabled" && exit 1);
-        php -m | grep -q xdebug || (echo "xdebug is not enabled" && exit 1);
         php -dmemory_limit=-1 vendor/phpunit/phpunit/phpunit --coverage-clover=build/coverage-phpunit/clover.xml;
 
     - name: Behat
